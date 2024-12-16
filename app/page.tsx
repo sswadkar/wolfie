@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 export default function Page() {
   return (
     <div className="flex h-full bg-gray-900 text-white">

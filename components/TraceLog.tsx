@@ -5,7 +5,6 @@ import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 interface TraceLogProps {
   isVisible: boolean;
-  toggleTraceLog: () => void;
 }
 
 const logs = [
@@ -54,7 +53,7 @@ const sources = [
   },
 ];
 
-const TraceLog: React.FC<TraceLogProps> = ({ isVisible, toggleTraceLog }) => {
+const TraceLog: React.FC<TraceLogProps> = ({ isVisible }) => {
   const [activeTab, setActiveTab] = useState<"trace" | "sources">("trace");
   const [currentIndex, setCurrentIndex] = useState(0);
 

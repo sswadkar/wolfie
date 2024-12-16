@@ -27,7 +27,7 @@ export default function RootLayout({
       <body className="bg-gray-900 text-white h-screen">
         <div className="flex h-full justify-between">
           {/* Sidebar */}
-          <Sidebar isVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+          <Sidebar isVisible={isSidebarVisible} />
 
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col h-full">
@@ -54,7 +54,7 @@ export default function RootLayout({
             <div className="flex-1">{children}</div>
           </div>
 
-          <TraceLog isVisible={isTraceLogVisible} toggleTraceLog={toggleTraceLog}></TraceLog>
+          <TraceLog isVisible={isTraceLogVisible} ></TraceLog>
         </div>
       </body>
     </html>

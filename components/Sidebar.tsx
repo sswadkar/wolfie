@@ -5,10 +5,9 @@ import React from "react";
 
 interface SidebarProps {
   isVisible: boolean;
-  toggleSidebar: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isVisible, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
   const options = [
     {
       title: "Check FDA Compliance",
