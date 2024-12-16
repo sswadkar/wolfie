@@ -24,7 +24,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className="bg-gray-900 text-white h-screen">
+      <body className="bg-gray-900 text-white h-screen w-screen">
         <div className="flex h-full justify-between">
           {/* Sidebar */}
           <Sidebar isVisible={isSidebarVisible} />
