@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`bg-gray-800 h-full flex flex-col transform transition-all duration-300 ${
+      className={`bg-gray-800 h-full flex flex-col transform transition-all duration-300 ease-in-out  ${
         isVisible ? "visible translate-x-0 w-80" : "invisible -translate-x-full w-0"
       }`}
     >

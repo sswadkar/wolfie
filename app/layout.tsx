@@ -5,6 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import { FiInfo, FiMenu } from "react-icons/fi";
 import { useState } from "react";
 import TraceLog from "@/components/TraceLog";
+import { figtree } from "@/lib/fonts";
 
 export default function RootLayout({
   children,
@@ -23,9 +24,9 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className={figtree.className}>
       <body className="bg-gray-900 text-white h-screen w-screen">
-        <div className="flex h-full justify-between">
+        <div className="flex h-full w-full justify-between">
           {/* Sidebar */}
           <Sidebar isVisible={isSidebarVisible} />
 
@@ -40,7 +41,7 @@ export default function RootLayout({
                 <FiMenu />
               </button>
               <h1 className="ml-4 text-2xl font-bold">
-                CVM <span className="text-blue-500">Wolfie</span>
+                CVM <span className="text-blue-500 text-2xl font-bold">Wolfie</span>
               </h1>
               <button
                 onClick={toggleTraceLog}

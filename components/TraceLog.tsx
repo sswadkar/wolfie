@@ -69,12 +69,13 @@ const TraceLog: React.FC<TraceLogProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`bg-gray-800 h-full flex flex-col transform transition-all duration-300 ${
+      className={`bg-gray-800 h-full flex flex-col transform transition-all duration-300 ease-in-out ${
         isVisible
           ? "visible translate-x-0 w-80 pt-4"
-          : "hidden -translate-x-full w-0"
+          : "invisible -translate-x-full w-0"
       }`}
     >
+      <div className={`${isVisible ? "visible" : "hidden"}`}>
       {/* Header */}
       <div className="w-full">
         <h2 className="text-md font-bold text-center text-gray-200">
@@ -162,6 +163,7 @@ const TraceLog: React.FC<TraceLogProps> = ({ isVisible }) => {
         >
           <FiArrowRight size={20} />
         </button>
+      </div>
       </div>
     </div>
   );

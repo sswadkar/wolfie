@@ -12,7 +12,7 @@ export default function Page() {
             <input
               type="text"
               placeholder="Send a message..."
-              className="flex-1 bg-gray-700 text-white p-2 rounded"
+              className="flex-1 bg-gray-700 text-white p-2 pl-3 rounded"
             />
             <button className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded">
               ⬆️
