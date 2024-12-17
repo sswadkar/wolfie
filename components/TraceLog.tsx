@@ -75,7 +75,7 @@ const TraceLog: React.FC<TraceLogProps> = ({ isVisible }) => {
           : "invisible -translate-x-full w-0"
       }`}
     >
-      <div className={`${isVisible ? "visible" : "hidden"}`}>
+      <div className={`overflow-y-scroll ${isVisible ? "visible" : "hidden"}`}>
       {/* Header */}
       <div className="w-full">
         <h2 className="text-md font-bold text-center text-gray-200">
@@ -111,7 +111,7 @@ const TraceLog: React.FC<TraceLogProps> = ({ isVisible }) => {
       </div>
 
       {/* Content Section */}
-      <div className="p-4 h-full flex-1 overflow-auto">
+      <div className="p-4 flex-1">
         {activeTab === "trace" ? (
           <div className="border border-gray-600 text-gray-300 p-4 rounded shadow-sm">
             <h3 className="text-sm font-semibold mb-2">Generating SQL Query</h3>
