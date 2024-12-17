@@ -69,7 +69,7 @@ const TraceLog: React.FC<TraceLogProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`bg-gray-800 h-full flex flex-col transform transition-all duration-300 ease-in-out ${
+      className={`fixed right-0 z-20 bg-gray-800 h-full flex flex-col transform transition-all duration-300 ease-in-out ${
         isVisible
           ? "visible translate-x-0 w-80 pt-4"
           : "invisible -translate-x-full w-0"

@@ -29,14 +29,13 @@ export default function RootLayout({
         <div className="flex h-full w-full justify-between">
           {/* Sidebar */}
           <Sidebar isVisible={isSidebarVisible} />
-
           {/* Main Content Area */}
-          <div className="flex-1 flex flex-col h-full">
+          <div className="flex-1 flex flex-col h-full z-0">
             {/* Header */}
             <div className="fixed w-full flex items-center justify-between bg-gray-800 p-4 z-50">
               <button
                 onClick={toggleSidebar}
-                className="text-white text-2xl focus:outline-none p-2 hover:bg-gray-700 rounded"
+                className={`text-white text-2xl focus:outline-none p-2 hover:bg-gray-700 rounded ${isSidebarVisible ? "ml-60" : "ml-2"}`}
               >
                 <FiMenu />
               </button>
@@ -45,7 +44,7 @@ export default function RootLayout({
               </h1>
               <button
                 onClick={toggleTraceLog}
-                className="text-white text-2xl focus:outline-none p-2 hover:bg-gray-700 rounded"
+                className={`text-white text-2xl focus:outline-none p-2 hover:bg-gray-700 rounded ${isTraceLogVisible ? "mr-80" : "mr-2"}`}
               >
                 <FiInfo />
               </button>
