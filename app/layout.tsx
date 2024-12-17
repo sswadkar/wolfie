@@ -5,7 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import { FiInfo, FiMenu } from "react-icons/fi";
 import { useState } from "react";
 import TraceLog from "@/components/TraceLog";
-import { figtree } from "@/lib/fonts";
+import { figtree, inter } from "@/lib/fonts";
 
 export default function RootLayout({
   children,
@@ -33,7 +33,7 @@ export default function RootLayout({
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col h-full">
             {/* Header */}
-            <div className="flex items-center justify-between bg-gray-800 p-4">
+            <div className="fixed w-full flex items-center justify-between bg-gray-800 p-4 z-50">
               <button
                 onClick={toggleSidebar}
                 className="text-white text-2xl focus:outline-none p-2 hover:bg-gray-700 rounded"
@@ -52,7 +52,7 @@ export default function RootLayout({
             </div>
 
             {/* Children */}
-            <div className="flex-1">{children}</div>
+            <div className={`pt-20 flex-1 ${inter.className}`}>{children}</div>
           </div>
 
           <TraceLog isVisible={isTraceLogVisible} ></TraceLog>

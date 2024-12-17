@@ -29,8 +29,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`bg-gray-800 h-full flex flex-col transform transition-all duration-300 ease-in-out  ${
-        isVisible ? "visible translate-x-0 w-80" : "invisible -translate-x-full w-0"
+      className={`fixed left-0 z-50 bg-gray-800 h-full flex flex-col transform transition-all duration-300 ease-in-out  ${
+        isVisible ? "visible translate-x-0 w-64" : "invisible -translate-x-full w-0"
       }`}
     >
       <div className="p-4 flex flex-col h-full w-full">
