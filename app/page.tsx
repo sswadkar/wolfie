@@ -88,24 +88,55 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
-    setTimeout(() => {
-      const simulatedResponse: ChatMessage = {
-        id: Date.now() + 1,
-        text: `Simulated response for ${isDocumentSearch ? "Document" : "Database"} search.`,
-        type: "bot",
-        data: isDocumentSearch
-          ? [
-              { title: "Document 1", content: "Document content 1" },
-              { title: "Document 2", content: "Document content 2" },
-            ]
-          : [
-              { field1: "Value 1", field2: "Value 2" },
-              { field1: "Value 3", field2: "Value 4" },
-            ],
-      };
-      setMessages((prev) => [...prev, simulatedResponse]);
-    }, 500);
-  };
+    const ws = new WebSocket("ws://localhost:8765");
+
+    ws.onopen = () => {
+        ws.send(JSON.stringify({ message: input }));
+    };
+
+    ws.onmessage = (event) => {
+        const response = JSON.parse(event.data);
+
+        if (response.database_info && typeof response.database_info === "object") {
+            const formattedData = Object.entries(response.database_info).map(([key, value]) => ({
+                field1: key,
+                field2: typeof value === "object" && Array.isArray(value)
+                    ? value.join(", ")
+                    : value?.toString() || "",
+            }));
+
+            const messageToEcho = JSON.parse(response.echo);
+
+            const botResponse: ChatMessage = {
+                id: Date.now() + 1,
+                text: `${messageToEcho.message}`,
+                type: "bot",
+                data: formattedData,
+            };
+
+            setMessages((prev) => [...prev, botResponse]);
+        } else {
+            const errorMessage: ChatMessage = {
+                id: Date.now() + 1,
+                text: "Invalid response format received.",
+                type: "bot",
+            };
+            setMessages((prev) => [...prev, errorMessage]);
+        }
+    };
+
+    ws.onerror = (error) => {
+        console.error("WebSocket Error:", error);
+        const errorMessage: ChatMessage = {
+            id: Date.now() + 1,
+            text: "An error occurred. Please try again.",
+            type: "bot",
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+    };
+};
+
+
 
   return (
     <div className="flex h-full w-full max-w-screen bg-gray-900 text-white">
