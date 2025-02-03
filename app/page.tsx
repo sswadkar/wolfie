@@ -88,11 +88,10 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
-    const PROD_WEBSOCKET_URL = process.env.NEXT_PUBLIC_PROD_WEBSOCKET_URL || "wss://";
     const WS_URL =
         process.env.NEXT_PUBLIC_TESTING_MODE === "true"
             ? process.env.NEXT_PUBLIC_TEST_WEBSOCKET_URL || "ws://localhost:8765"
-            : `${process.env.NEXT_PUBLIC_PROXY_URL}?target=${encodeURIComponent(PROD_WEBSOCKET_URL)}`;
+            : 'ws://localhost:3000/api/socket'; // Connect via the http-proxy established on localhost:3000/api/socket
 
     const ws = new WebSocket(WS_URL);
 
