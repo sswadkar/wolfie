@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { FiCopy } from "react-icons/fi";
 import { Switch } from "@/components/ui/switch"; // Import the ShadCN Switch component
@@ -19,7 +19,7 @@ function ChatMessageComponent({ message, onCopy }: { message: ChatMessage; onCop
         className={`p-3 flex flex-col rounded-lg ${
           message.type === "user"
             ? "bg-gray-700 text-white text-sm items-end"
-            : "bg-gray-800 text-gray-200 text-sm max-w-[85%]"
+            : "bg-gray-700 text-gray-200 text-sm max-w-[85%]"
         }`}
       >
         {message.data && (
@@ -65,7 +65,10 @@ function ChatMessageComponent({ message, onCopy }: { message: ChatMessage; onCop
 export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const [isDocumentSearch, setIsDocumentSearch] = useState(false);
+  const [isDocumentSearch, setIsDocumentSearch] = useState(true);
+
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const prevMessageId = useRef<number>(-1)
 
   useEffect(() => {
     const savedMessages = sessionStorage.getItem("chat_messages");
@@ -86,21 +89,50 @@ export default function ChatPage() {
 
     const userMessage: ChatMessage = { id: Date.now(), text: input, type: "user" };
     setMessages((prev) => [...prev, userMessage]);
+
     setInput("");
 
     const WS_URL =
         process.env.NEXT_PUBLIC_TESTING_MODE === "true"
             ? process.env.NEXT_PUBLIC_TEST_WEBSOCKET_URL || "ws://localhost:8765"
-            : 'ws://localhost:3000/api/socket'; // Connect via the http-proxy established on localhost:3000/api/socket
+            : process.env.NEXT_PUBLIC_PROD_WEBSOCKET_URL || "wss://"; // Connect via the http-proxy established on localhost:3000/api/socket
 
     const ws = new WebSocket(WS_URL);
 
+    let thinkingMessageId: number | null = null;
+    let thinkingInterval: NodeJS.Timeout | null = null;
+
+    // Delay showing "thinking..." message by 500ms to avoid flickering on fast responses
+    const thinkingTimeout = setTimeout(() => {
+        thinkingMessageId = Date.now() + 1;
+
+        const thinkingMessage: ChatMessage = {
+          id: thinkingMessageId,
+          text: `Thinking.`,
+          type: "bot",
+        };
+
+        setMessages((prev) => [...prev, thinkingMessage]);
+
+        let dots = 1;
+        thinkingInterval = setInterval(() => {
+            setMessages((prev) =>
+                prev.map((msg) =>
+                    msg.id === thinkingMessageId ? { ...msg, text: `Thinking${".".repeat(dots)}` } : msg
+                )
+            );
+            dots = (dots % 3) + 1;
+        }, 350);
+    }, 250);
+
     ws.onopen = () => {
-        ws.send(JSON.stringify({ message: input }));
+        ws.send(JSON.stringify({ "action": "sendMessage", message: input }));
     };
 
     ws.onmessage = (event) => {
         const response = JSON.parse(event.data);
+      
+        setMessages((prev) => prev.filter((msg) => msg.id !== thinkingMessageId)); // remove thinking message
 
         if (response.database_info && typeof response.database_info === "object") {
             const formattedData = Object.entries(response.database_info).map(([key, value]) => ({
@@ -110,21 +142,34 @@ export default function ChatPage() {
                     : value?.toString() || "",
             }));
 
-            const messageToEcho = JSON.parse(response.echo);
+            const messageToEcho = JSON.parse(response);
+
+            console.log(messageToEcho)
 
             const botResponse: ChatMessage = {
-                id: Date.now() + 1,
-                text: `${messageToEcho.message}`,
+                id: Date.now() + 2,
+                text: `${messageToEcho.response}`,
                 type: "bot",
                 data: formattedData,
             };
 
             setMessages((prev) => [...prev, botResponse]);
+        } else if (response.response) {
+
+            console.log(response.response)
+            
+            const botResponse: ChatMessage = {
+              id: Date.now() + 2,
+              text: `${response.response}`,
+              type: "bot",
+            }
+
+            setMessages((prev) => [...prev, botResponse]);
         } else {
             const errorMessage: ChatMessage = {
-                id: Date.now() + 1,
-                text: "Invalid response format received.",
-                type: "bot",
+              id: Date.now() + 2,
+              text: "Invalid response format received.",
+              type: "bot",
             };
             setMessages((prev) => [...prev, errorMessage]);
         }
@@ -133,18 +178,25 @@ export default function ChatPage() {
     ws.onerror = (error) => {
         console.error("WebSocket Error:", error);
         const errorMessage: ChatMessage = {
-            id: Date.now() + 1,
+            id: Date.now() + 2,
             text: "An error occurred. Please try again.",
             type: "bot",
         };
         setMessages((prev) => [...prev, errorMessage]);
     };
 };
-
-
+  
+  useEffect(() => {
+    if (chatContainerRef.current && messages.length > 0 && messages[messages.length - 1].id != prevMessageId.current) {
+      window.scrollTo(0, chatContainerRef.current.offsetHeight)
+    }
+    if (messages.length > 0) {
+      prevMessageId.current = messages[messages.length - 1].id
+    }
+  }, [messages]);
 
   return (
-    <div className="flex h-full w-full max-w-screen bg-gray-900 text-white">
+    <div ref={chatContainerRef} className="flex h-full w-full max-w-screen bg-gray-800 text-white">
       <div className="flex-1 flex flex-col">
         {/* Chat Messages */}
         <div className="flex-1 w-screen overflow-y-scroll p-4 space-y-4">
@@ -154,7 +206,7 @@ export default function ChatPage() {
         </div>
 
         {/* Input Section */}
-        <div className="bg-gray-800 p-4 flex items-center">
+        <div className="bg-gray-800 p-4 flex items-center absolute bottom-0 sticky">
           {/* ShadCN Switch */}
           <div className="flex items-center mr-4">
             <span
@@ -167,6 +219,7 @@ export default function ChatPage() {
             <Switch
               checked={isDocumentSearch}
               onCheckedChange={(checked) => setIsDocumentSearch(checked)}
+              disabled
               className="bg-gray-600 border-2 border-gray-500 rounded-full"
             />
             <span

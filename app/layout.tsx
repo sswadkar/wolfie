@@ -25,14 +25,14 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={figtree.className}>
-      <body className="bg-gray-900 text-white h-screen w-screen">
+      <body className="bg-gray-800 text-white h-screen w-screen">
         <div className="flex h-full w-full justify-between">
           {/* Sidebar */}
           <Sidebar isVisible={isSidebarVisible} />
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col h-full z-0">
             {/* Header */}
-            <div className="fixed w-full flex items-center justify-between bg-gray-800 p-4 z-50">
+            <div className="fixed w-full flex items-center justify-between bg-gray-900 p-4 z-50">
               <button
                 onClick={toggleSidebar}
                 className={`text-white text-2xl focus:outline-none p-2 hover:bg-gray-700 rounded ${isSidebarVisible ? "ml-60" : "ml-2"}`}
