@@ -123,7 +123,10 @@ export default function ChatPage() {
             );
             dots = (dots % 3) + 1;
         }, 350);
+        console.log(thinkingInterval)
     }, 250);
+
+    console.log(thinkingTimeout)
 
     ws.onopen = () => {
         ws.send(JSON.stringify({ "action": "sendMessage", message: input }));
