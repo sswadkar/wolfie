@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { FiCopy } from "react-icons/fi";
 import { Switch } from "@/components/ui/switch"; // Import the ShadCN Switch component
+import Source from "@/components/TraceLog";
 
 interface ChatMessage {
   id: number;
@@ -11,6 +12,34 @@ interface ChatMessage {
   type: "user" | "bot";
   data?: { [key: string]: string }[];
 }
+
+function insertSourceLinks(text: string, sources: {[key: string] : any}[]) {
+  if (!sources || sources.length === 0) return text;
+
+  let modifiedText = text;
+  let offset = 0;
+
+  sources.forEach((source, index) => {
+      const start = source.source_text_span.start + offset;
+      const end = source.source_text_span.end + offset;
+      const sourceNumber = index + 1;
+
+      if (start < 0 || end > text.length) return;
+
+      const hyperlink = `<a href="#tracelog-source-${sourceNumber}" class="source-link text-blue-500 hover:text-blue-400 underline">(${sourceNumber})</a>`;
+
+      modifiedText =
+          modifiedText.substring(start, end) +
+          " " +
+          hyperlink +
+          modifiedText.substring(end);
+
+      offset += hyperlink.length + 1;
+  });
+
+  return modifiedText;
+}
+
 
 function ChatMessageComponent({ message, onCopy }: { message: ChatMessage; onCopy: (text: string) => void }) {
   return (
@@ -48,7 +77,11 @@ function ChatMessageComponent({ message, onCopy }: { message: ChatMessage; onCop
             </Table>
           </div>
         )}
-        <p>{message.text}</p>
+        {message.type === "bot" ? (
+          <p dangerouslySetInnerHTML={{ __html: message.text }}></p>
+        ) : (
+          <p>{message.text}</p>
+        )}
         {message.type === "bot" && (
           <button
             onClick={() => onCopy(message.text)}
@@ -66,6 +99,8 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isDocumentSearch, setIsDocumentSearch] = useState(true);
+  const [sourcesData, setSourcesData] = useState<typeof Source[]>([]);
+
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const prevMessageId = useRef<number>(-1)
@@ -123,21 +158,25 @@ export default function ChatPage() {
             );
             dots = (dots % 3) + 1;
         }, 350);
-        console.log(thinkingInterval)
     }, 250);
 
-    console.log(thinkingTimeout)
+    console.log(thinkingTimeout);
 
     ws.onopen = () => {
         ws.send(JSON.stringify({ "action": "sendMessage", message: input }));
     };
 
     ws.onmessage = (event) => {
-        const response = JSON.parse(event.data);
+        const eventData = JSON.parse(event.data)
+
+        const response = eventData.response;
+        const sources = response.sources;
+        // console.log(sources)
       
         setMessages((prev) => prev.filter((msg) => msg.id !== thinkingMessageId)); // remove thinking message
 
         if (response.database_info && typeof response.database_info === "object") {
+            console.log("DB query");
             const formattedData = Object.entries(response.database_info).map(([key, value]) => ({
                 field1: key,
                 field2: typeof value === "object" && Array.isArray(value)
@@ -145,9 +184,9 @@ export default function ChatPage() {
                     : value?.toString() || "",
             }));
 
-            const messageToEcho = JSON.parse(response);
+            const messageToEcho = response.response;
 
-            console.log(messageToEcho)
+            //console.log(messageToEcho)
 
             const botResponse: ChatMessage = {
                 id: Date.now() + 2,
@@ -158,17 +197,28 @@ export default function ChatPage() {
 
             setMessages((prev) => [...prev, botResponse]);
         } else if (response.response) {
+            console.log("KB Query");
 
-            console.log(response.response)
+            const formattedSources = sources.map((source: {question: string, source_url: string, page_content: string}, index: number) => ({
+              question: source.question || "No question available",
+              indicator: (sourcesData.length + index + 1).toString(), // Continue numbering
+              source_url: source.source_url || "No source URL",
+              page_content: source.page_content || "No content available",
+          }));
+
+            setSourcesData((prevSources) => [...prevSources, ...formattedSources]);
+
+            const hyperlinkedSourcesResponse = insertSourceLinks(response.response, sources)
             
             const botResponse: ChatMessage = {
               id: Date.now() + 2,
-              text: `${response.response}`,
+              text: hyperlinkedSourcesResponse,
               type: "bot",
             }
 
             setMessages((prev) => [...prev, botResponse]);
         } else {
+            console.log("error query")
             const errorMessage: ChatMessage = {
               id: Date.now() + 2,
               text: "Invalid response format received.",

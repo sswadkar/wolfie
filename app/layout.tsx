@@ -6,6 +6,7 @@ import { FiInfo, FiMenu } from "react-icons/fi";
 import { useState } from "react";
 import TraceLog from "@/components/TraceLog";
 import { figtree, inter } from "@/lib/fonts";
+import Source from "@/components/TraceLog";
 
 export default function RootLayout({
   children,
@@ -14,6 +15,8 @@ export default function RootLayout({
 }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [isTraceLogVisible, setTraceLogVisible] = useState(false);
+  const [sourcesData, setSourcesData] = useState<typeof Source[]>([]); // Now dynamic
+
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
@@ -54,7 +57,7 @@ export default function RootLayout({
             <div className={`pt-20 flex-1 ${inter.className}`}>{children}</div>
           </div>
 
-          <TraceLog isVisible={isTraceLogVisible} ></TraceLog>
+          <TraceLog isVisible={isTraceLogVisible} sourcesData={sourcesData} ></TraceLog>
         </div>
       </body>
     </html>
