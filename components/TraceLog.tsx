@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 interface Source {
@@ -17,7 +17,7 @@ interface TraceLogProps {
 const TraceLog: React.FC<TraceLogProps> = ({ isVisible }) => {
   const [activeTab, setActiveTab] = useState<"trace" | "sources">("trace");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [sources, setSources] = useState<Source[]>([]);
+  const [sources] = useState<Source[]>([]);
 
   // Append new sources while keeping old ones
   // useEffect(() => {

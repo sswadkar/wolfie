@@ -13,7 +13,7 @@ interface ChatMessage {
   data?: { [key: string]: string }[];
 }
 
-function insertSourceLinks(text: string, sources: {[key: string] : any}[]) {
+function insertSourceLinks(text: string, sources: {[key: string] : {[sub_key: string]: number}}[]) {
   if (!sources || sources.length === 0) return text;
 
   let modifiedText = text;
@@ -158,6 +158,7 @@ export default function ChatPage() {
             );
             dots = (dots % 3) + 1;
         }, 350);
+        console.log(thinkingInterval);
     }, 250);
 
     console.log(thinkingTimeout);
