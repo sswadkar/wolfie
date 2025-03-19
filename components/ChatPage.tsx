@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { FiCopy } from "react-icons/fi";
 import { Switch } from "@/components/ui/switch"; // Import the ShadCN Switch component
-import Source from "@/components/TraceLog";
 
 interface ChatMessage {
   id: number;
@@ -13,28 +12,36 @@ interface ChatMessage {
   data?: { [key: string]: string }[];
 }
 
-function insertSourceLinks(text: string, sources: {[key: string] : {[sub_key: string]: number}}[]) {
+interface Source {
+  question: string;
+  indicator: string;
+  source_url: string;
+  page_content: string;
+}
+
+function insertSourceLinks(text: string, sources: { [key: string]: { [sub_key: string]: number } }[]) {
   if (!sources || sources.length === 0) return text;
 
   let modifiedText = text;
-  let offset = 0;
+
+  // Sort sources in descending order of start index to prevent index shifting
+  sources.sort((a, b) => b.source_text_span.start - a.source_text_span.start);
 
   sources.forEach((source, index) => {
-      const start = source.source_text_span.start + offset;
-      const end = source.source_text_span.end + offset;
-      const sourceNumber = index + 1;
+      const start = source.source_text_span.start;
+      const end = source.source_text_span.end;
+      const sourceNumber = sources.length - index;
 
-      if (start < 0 || end > text.length) return;
+      if (start < 0 || end > modifiedText.length) return;
 
       const hyperlink = `<a href="#tracelog-source-${sourceNumber}" class="source-link text-blue-500 hover:text-blue-400 underline">(${sourceNumber})</a>`;
 
+      // Insert hyperlink at the correct position
       modifiedText =
-          modifiedText.substring(start, end) +
+          modifiedText.substring(0, end) +
           " " +
           hyperlink +
           modifiedText.substring(end);
-
-      offset += hyperlink.length + 1;
   });
 
   return modifiedText;
@@ -95,11 +102,15 @@ function ChatMessageComponent({ message, onCopy }: { message: ChatMessage; onCop
   );
 }
 
-export default function ChatPage() {
+interface ChatPageProps {
+  sourcesData: Source[];
+  setSourcesData: React.Dispatch<React.SetStateAction<Source[]>>;
+}
+
+const ChatPage: React.FC<ChatPageProps> = ({sourcesData, setSourcesData}) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isDocumentSearch, setIsDocumentSearch] = useState(true);
-  const [sourcesData, setSourcesData] = useState<typeof Source[]>([]);
 
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -172,7 +183,7 @@ export default function ChatPage() {
 
         const response = eventData.response;
         const sources = response.sources;
-        // console.log(sources)
+        console.log(sources)
       
         setMessages((prev) => prev.filter((msg) => msg.id !== thinkingMessageId)); // remove thinking message
 
@@ -201,7 +212,7 @@ export default function ChatPage() {
             console.log("KB Query");
 
             const formattedSources = sources.map((source: {question: string, source_url: string, page_content: string}, index: number) => ({
-              question: source.question || "No question available",
+              question: userMessage.text || "No question available",
               indicator: (sourcesData.length + index + 1).toString(), // Continue numbering
               source_url: source.source_url || "No source URL",
               page_content: source.page_content || "No content available",
@@ -306,3 +317,5 @@ export default function ChatPage() {
     </div>
   );
 }
+
+export default ChatPage;

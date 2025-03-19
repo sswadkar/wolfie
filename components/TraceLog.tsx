@@ -12,17 +12,12 @@ interface Source {
 
 interface TraceLogProps {
   isVisible: boolean;
+  sources: Source[];
 }
 
-const TraceLog: React.FC<TraceLogProps> = ({ isVisible }) => {
+const TraceLog: React.FC<TraceLogProps> = ({ isVisible, sources }) => {
   const [activeTab, setActiveTab] = useState<"trace" | "sources">("trace");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [sources] = useState<Source[]>([]);
-
-  // Append new sources while keeping old ones
-  // useEffect(() => {
-  //   setSources((prevSources) => [...prevSources, ...sourcesData]);
-  // }, [sourcesData]);
 
   const contentLength = activeTab === "trace" ? 1 : sources.length;
 

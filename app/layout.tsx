@@ -6,16 +6,19 @@ import { FiInfo, FiMenu } from "react-icons/fi";
 import { useState } from "react";
 import TraceLog from "@/components/TraceLog";
 import { figtree, inter } from "@/lib/fonts";
-// import Source from "@/components/TraceLog";
+import ChatPage from "@/components/ChatPage";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface Source {
+  question: string;
+  indicator: string;
+  source_url: string;
+  page_content: string;
+}
+
+export default function RootLayout() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [isTraceLogVisible, setTraceLogVisible] = useState(false);
-
+  const [sourcesData, setSourcesData] = useState<Source[]>([]);
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
@@ -52,11 +55,13 @@ export default function RootLayout({
               </button>
             </div>
 
-            {/* Children */}
-            <div className={`pt-20 flex-1 ${inter.className}`}>{children}</div>
+            {/* Pass sourcesData and setSourcesData to children */}
+            <div className={`pt-20 flex-1 ${inter.className}`}>
+              <ChatPage sourcesData={sourcesData} setSourcesData={setSourcesData}  />
+            </div>
           </div>
 
-          <TraceLog isVisible={isTraceLogVisible} ></TraceLog>
+          <TraceLog isVisible={isTraceLogVisible} sources={sourcesData} />
         </div>
       </body>
     </html>
