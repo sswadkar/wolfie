@@ -19,6 +19,8 @@ export default function RootLayout() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [isTraceLogVisible, setTraceLogVisible] = useState(false);
   const [sourcesData, setSourcesData] = useState<Source[]>([]);
+  const [activeTab, setActiveTab] = useState<"trace" | "sources">("sources");
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
@@ -57,11 +59,11 @@ export default function RootLayout() {
 
             {/* Pass sourcesData and setSourcesData to children */}
             <div className={`pt-20 flex-1 ${inter.className}`}>
-              <ChatPage sourcesData={sourcesData} setSourcesData={setSourcesData}  />
+              <ChatPage sourcesData={sourcesData} setSourcesData={setSourcesData} setTraceLogVisible={setTraceLogVisible} setActiveTab={setActiveTab} setSourceIndex={setCurrentIndex}  />
             </div>
           </div>
 
-          <TraceLog isVisible={isTraceLogVisible} sources={sourcesData} />
+          <TraceLog isVisible={isTraceLogVisible} sources={sourcesData} activeTab={activeTab} setActiveTab={setActiveTab} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
         </div>
       </body>
     </html>

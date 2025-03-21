@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 interface Source {
@@ -13,12 +13,13 @@ interface Source {
 interface TraceLogProps {
   isVisible: boolean;
   sources: Source[];
+  activeTab: string;
+  setActiveTab: React.Dispatch<React.SetStateAction<"trace" | "sources">>;
+  currentIndex: number
+  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const TraceLog: React.FC<TraceLogProps> = ({ isVisible, sources }) => {
-  const [activeTab, setActiveTab] = useState<"trace" | "sources">("trace");
-  const [currentIndex, setCurrentIndex] = useState(0);
-
+const TraceLog: React.FC<TraceLogProps> = ({ isVisible, sources, activeTab, setActiveTab, currentIndex, setCurrentIndex }) => {
   const contentLength = activeTab === "trace" ? 1 : sources.length;
 
   const goToPrevious = () => {

@@ -19,7 +19,7 @@ interface Source {
   page_content: string;
 }
 
-function insertSourceLinks(text: string, sources: { [key: string]: { [sub_key: string]: number } }[]) {
+function insertSourceLinks(text: string, sources: { [key: string]: { [sub_key: string]: number } }[], offset: number) {
   if (!sources || sources.length === 0) return text;
 
   let modifiedText = text;
@@ -34,7 +34,7 @@ function insertSourceLinks(text: string, sources: { [key: string]: { [sub_key: s
 
       if (start < 0 || end > modifiedText.length) return;
 
-      const hyperlink = `<a href="#tracelog-source-${sourceNumber}" class="source-link text-blue-500 hover:text-blue-400 underline">(${sourceNumber})</a>`;
+      const hyperlink = `<a key=${sourceNumber + offset} href="#source-${sourceNumber + offset}" class="source-link text-blue-500 hover:text-blue-400 underline">(${sourceNumber + offset})</a>`;
 
       // Insert hyperlink at the correct position
       modifiedText =
@@ -105,9 +105,12 @@ function ChatMessageComponent({ message, onCopy }: { message: ChatMessage; onCop
 interface ChatPageProps {
   sourcesData: Source[];
   setSourcesData: React.Dispatch<React.SetStateAction<Source[]>>;
+  setTraceLogVisible: React.Dispatch<React.SetStateAction<boolean>>; 
+  setActiveTab: React.Dispatch<React.SetStateAction<"trace" | "sources">>;
+  setSourceIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ChatPage: React.FC<ChatPageProps> = ({sourcesData, setSourcesData}) => {
+const ChatPage: React.FC<ChatPageProps> = ({sourcesData, setSourcesData, setTraceLogVisible, setActiveTab, setSourceIndex}) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isDocumentSearch, setIsDocumentSearch] = useState(true);
@@ -124,6 +127,32 @@ const ChatPage: React.FC<ChatPageProps> = ({sourcesData, setSourcesData}) => {
   useEffect(() => {
     sessionStorage.setItem("chat_messages", JSON.stringify(messages));
   }, [messages]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash; // e.g. "#source-3"
+      const match = hash.match(/^#source-(\d+)$/);
+  
+      if (match) {
+        const index = parseInt(match[1], 10);
+        setTraceLogVisible(true);
+        setActiveTab("sources");
+        setSourceIndex(index - 1);
+  
+        // Optional: Clear the hash so it doesn't trigger again on re-render
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    };
+  
+    window.addEventListener("hashchange", handleHashChange);
+  
+    // Also call immediately in case the link is already clicked before mounting
+    handleHashChange();
+  
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -217,10 +246,11 @@ const ChatPage: React.FC<ChatPageProps> = ({sourcesData, setSourcesData}) => {
               source_url: source.source_url || "No source URL",
               page_content: source.page_content || "No content available",
           }));
+            const offset = sourcesData.length
 
             setSourcesData((prevSources) => [...prevSources, ...formattedSources]);
 
-            const hyperlinkedSourcesResponse = insertSourceLinks(response.response, sources)
+            const hyperlinkedSourcesResponse = insertSourceLinks(response.response, sources, offset)
             
             const botResponse: ChatMessage = {
               id: Date.now() + 2,
