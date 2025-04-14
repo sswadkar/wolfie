@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { FaChevronDown, FaChevronUp, FaTag } from "react-icons/fa"
 import type React from "react"
+import { figtree } from "@/lib/fonts"
 
 interface SidebarProps {
   isVisible: boolean
@@ -55,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`bg-white border-l border-gray-200 h-full flex flex-col transition-all duration-300 ease-in-out shadow-md ${
+      className={`bg-white border-l border-gray-200 h-full flex flex-col transition-all duration-300 ease-in-out shadow-md ${figtree.className} ${
         isVisible ? "w-80" : "w-0 overflow-hidden"
       }`}
     >

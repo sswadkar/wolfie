@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { figtree } from "@/lib/fonts"
 
 const examples = [
   "FDA regulations for medical devices",
@@ -43,13 +44,13 @@ export const WelcomeScreen = () => {
   }, [currentText, delta, exampleIndex, isDeleting])
   
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <h1 className="text-4xl font-bold text-gray-600 z-10">
+    <div className={`flex flex-col items-center justify-center h-full ${figtree.className}`}>
+      <h1 className="text-5xl font-bold text-gray-600 z-10">
           Hey <span className="text-blue-800 font-bold">Wolfie</span>
         </h1>
       <div className="h-8 mt-4">
-        <p className="text-xl text-gray-600">
-          Ask me about <span className="text-blue-600 font-medium">{currentText}</span>
+        <p className="text-2xl text-gray-600">
+          Ask me about <span className="text-blue-600 font-bold">{currentText}</span>
           <span className="animate-blink">|</span>
         </p>
       </div>
