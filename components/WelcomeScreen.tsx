@@ -46,7 +46,7 @@ export const WelcomeScreen = () => {
   return (
     <div className={`flex flex-col items-center justify-center h-full ${figtree.className}`}>
       <h1 className="text-5xl font-bold text-gray-600 z-10">
-          Hey <span className="text-blue-800 font-bold">Wolfie</span>
+          Hey <span className="text-blue-800 font-bold">ARC Gen AI</span>
         </h1>
       <div className="h-8 mt-4">
         <p className="text-2xl text-gray-600">

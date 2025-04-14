@@ -65,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
         <div className="flex flex-col items-center mb-4">
           {/* Header */}
           <div className="flex flex-col items-center mb-4">
-            <h2 className="text-lg font-bold text-gray-800">Configure Settings</h2>
+            <h2 className="text-lg font-bold text-gray-800">Configure Prompt Parameters</h2>
           </div>
 
           {/* Document Toggle Checkboxes */}

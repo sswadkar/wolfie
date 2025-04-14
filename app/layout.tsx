@@ -3,8 +3,8 @@ import type { Metadata } from "next"
 import ClientLayout from "./ClientLayout"
 
 export const metadata: Metadata = {
-  title: "CVM Wolfie",
-  description: "CVM Wolfie",
+  title: "ARC Gen AI",
+  description: "ARC Gen AI - Regulatory Document Assistant",
 }
 
 export default function RootLayout() {
