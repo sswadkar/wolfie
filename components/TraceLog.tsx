@@ -1,87 +1,95 @@
-"use client";
+"use client"
 
-import React from "react";
-import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import type React from "react"
+import { FiArrowLeft, FiArrowRight } from "react-icons/fi"
 
 interface Source {
-  question: string;
-  indicator: string;
-  source_url: string;
-  page_content: string;
+  question: string
+  indicator: string
+  source_url: string
+  page_content: string
 }
 
 interface TraceLogProps {
-  isVisible: boolean;
-  sources: Source[];
-  activeTab: string;
-  setActiveTab: React.Dispatch<React.SetStateAction<"trace" | "sources">>;
+  isVisible: boolean
+  sources: Source[]
+  activeTab: string
+  setActiveTab: React.Dispatch<React.SetStateAction<"trace" | "sources">>
   currentIndex: number
-  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+  setCurrentIndex: React.Dispatch<React.SetStateAction<number>>
+  setTraceLogVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const TraceLog: React.FC<TraceLogProps> = ({ isVisible, sources, activeTab, setActiveTab, currentIndex, setCurrentIndex }) => {
-  const contentLength = activeTab === "trace" ? 1 : sources.length;
+const TraceLog: React.FC<TraceLogProps> = ({
+  isVisible,
+  sources,
+  activeTab,
+  setActiveTab,
+  currentIndex,
+  setCurrentIndex,
+  setTraceLogVisible,
+}) => {
+  const contentLength = activeTab === "trace" ? 1 : sources.length
 
   const goToPrevious = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  };
+    setCurrentIndex((prev) => Math.max(prev - 1, 0))
+  }
 
   const goToNext = () => {
-    setCurrentIndex((prev) => Math.min(prev + 1, contentLength - 1));
-  };
+    setCurrentIndex((prev) => Math.min(prev + 1, contentLength - 1))
+  }
+
+  if (!isVisible) return null
 
   return (
-    <div
-      className={`fixed right-0 z-20 bg-gray-800 h-full flex flex-col transform transition-all duration-300 ease-in-out ${
-        isVisible ? "visible translate-x-0 w-80 pt-4" : "invisible -translate-x-full w-0"
-      }`}
-    >
-      <div className={`overflow-y-scroll ${isVisible ? "visible" : "hidden"}`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="w-full">
-          <h2 className="text-md font-bold text-center text-gray-200">
-            {activeTab === "trace" ? "Trace Log" : "Sources"}
-          </h2>
-          <p className="text-xs text-gray-400 text-center">
-            View Wolfie’s {activeTab === "trace" ? "workflow here" : "sources here"}
-          </p>
-          <div className="mt-4 flex justify-between w-full text-sm bg-gray-900">
+        <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+          <h2 className="text-lg font-bold text-gray-800">{activeTab === "trace" ? "Trace Log" : "Sources"}</h2>
+          <div className="flex items-center">
             <button
-              onClick={() => {
-                setActiveTab("trace");
-                setCurrentIndex(0);
-              }}
-              className={`w-1/2 py-2 rounded-b-lg ${activeTab === "trace" ? "bg-gray-600" : "bg-gray-700"} text-white hover:bg-gray-500`}
+              onClick={() => setActiveTab(activeTab === "trace" ? "sources" : "trace")}
+              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 mr-2"
             >
-              View Trace Log
+              Switch to {activeTab === "trace" ? "Sources" : "Trace Log"}
             </button>
             <button
-              onClick={() => {
-                setActiveTab("sources");
-                setCurrentIndex(0);
-              }}
-              className={`w-1/2 py-2 rounded-b-lg ${activeTab === "sources" ? "bg-gray-600" : "bg-gray-700"} text-white hover:bg-gray-500`}
+              onClick={() => setTraceLogVisible(false)}
+              className="p-2 text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-100"
+              aria-label="Close"
             >
-              View Sources
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
             </button>
           </div>
         </div>
 
         {/* Content Section */}
-        <div className="p-4 flex-1">
+        <div className="p-4 overflow-y-auto flex-1">
           {activeTab === "trace" ? (
-            <div className="border border-gray-600 text-gray-300 p-4 rounded shadow-sm">
+            <div className="border border-gray-300 text-gray-800 p-4 rounded shadow-sm">
               <h3 className="text-sm font-semibold mb-2">Generating SQL Query</h3>
               <pre className="text-xs whitespace-pre-wrap leading-5">SELECT ...</pre>
             </div>
           ) : sources.length > 0 ? (
-            <div className="border border-gray-600 text-gray-300 p-4 rounded shadow-sm">
+            <div className="border border-gray-300 text-gray-800 p-4 rounded shadow-sm">
               <h3 className="text-lg font-bold mb-2">Sources</h3>
-              <p className="text-blue-500 text-sm mb-1">
+              <p className="text-blue-600 text-sm mb-1">
                 ({sources[currentIndex].indicator}){" "}
-                <span className="px-1 text-sm text-gray-600">
-                  Related to: {sources[currentIndex].question}
-                </span>
+                <span className="px-1 text-sm text-gray-500">Related to: {sources[currentIndex].question}</span>
               </p>
               <p className="text-md mt-4 font-semibold">Source URL:</p>
               <p className="text-sm mb-2">{sources[currentIndex].source_url}</p>
@@ -89,33 +97,36 @@ const TraceLog: React.FC<TraceLogProps> = ({ isVisible, sources, activeTab, setA
               <p className="text-sm mt-4 whitespace-pre-wrap">{sources[currentIndex].page_content}</p>
             </div>
           ) : (
-            <p className="text-gray-400 text-sm text-center">No sources available.</p>
+            <p className="text-gray-500 text-sm text-center">No sources available.</p>
           )}
         </div>
 
         {/* Footer */}
-        <div className="mb-4 flex justify-center items-center space-x-6 text-gray-400">
-          <button
-            onClick={goToPrevious}
-            disabled={currentIndex === 0}
-            className={`hover:text-white ${currentIndex === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            <FiArrowLeft size={20} />
-          </button>
-          <p className="text-sm">
-            <span className="font-bold">{currentIndex + 1}</span> of <span className="font-bold">{contentLength}</span>
-          </p>
-          <button
-            onClick={goToNext}
-            disabled={currentIndex === contentLength - 1}
-            className={`hover:text-white ${currentIndex === contentLength - 1 ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            <FiArrowRight size={20} />
-          </button>
+        <div className="p-4 border-t border-gray-200 flex justify-between items-center">
+          <div className="flex items-center space-x-6 text-gray-500">
+            <button
+              onClick={goToPrevious}
+              disabled={currentIndex === 0}
+              className={`hover:text-gray-800 ${currentIndex === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              <FiArrowLeft size={20} />
+            </button>
+            <p className="text-sm">
+              <span className="font-bold">{currentIndex + 1}</span> of{" "}
+              <span className="font-bold">{contentLength}</span>
+            </p>
+            <button
+              onClick={goToNext}
+              disabled={currentIndex === contentLength - 1}
+              className={`hover:text-gray-800 ${currentIndex === contentLength - 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              <FiArrowRight size={20} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TraceLog;
+export default TraceLog
