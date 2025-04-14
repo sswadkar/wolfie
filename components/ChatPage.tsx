@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react"
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 import { FiCopy } from "react-icons/fi"
 import { Switch } from "@/components/ui/switch" // Import the ShadCN Switch component
+import { WelcomeScreen } from "./WelcomeScreen"
 
 interface ChatMessage {
   id: number
@@ -279,7 +280,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 
   useEffect(() => {
     if (chatContainerRef.current && messages.length > 0 && messages[messages.length - 1].id != prevMessageId.current) {
-      window.scrollTo(0, chatContainerRef.current.offsetHeight)
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
     }
     if (messages.length > 0) {
       prevMessageId.current = messages[messages.length - 1].id
@@ -287,42 +288,45 @@ const ChatPage: React.FC<ChatPageProps> = ({
   }, [messages])
 
   return (
-    <div ref={chatContainerRef} className="flex h-full w-full max-w-screen bg-white text-gray-800">
-      <div className="flex-1 flex flex-col">
-        {/* Chat Messages */}
-        <div className="flex-1 w-screen overflow-y-scroll p-4 space-y-4">
-          {messages.map((msg) => (
-            <ChatMessageComponent key={msg.id} message={msg} onCopy={handleCopy} />
-          ))}
+    <div className="flex flex-col h-full">
+      {/* Chat Messages or Welcome Screen */}
+      <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length > 0 ? (
+          messages.map((msg) => <ChatMessageComponent key={msg.id} message={msg} onCopy={handleCopy} />)
+        ) : (
+          <WelcomeScreen />
+        )}
+      </div>
+
+      {/* Input Section */}
+      <div className="bg-gray-50 p-4 flex items-center border-t border-gray-200">
+        {/* ShadCN Switch */}
+        <div className="flex items-center mr-4">
+          <span className={`mr-2 text-sm ${isDocumentSearch ? "text-gray-500" : "text-blue-600"}`}>Database</span>
+          <Switch
+            checked={isDocumentSearch}
+            onCheckedChange={(checked) => setIsDocumentSearch(checked)}
+            disabled
+            className="bg-gray-300 border-2 border-gray-200 rounded-full"
+          />
+          <span className={`ml-2 text-sm ${isDocumentSearch ? "text-blue-600" : "text-gray-500"}`}>Document</span>
         </div>
 
-        {/* Input Section */}
-        <div className="bg-gray-50 p-4 flex items-center absolute bottom-0 sticky border-t border-gray-200">
-          {/* ShadCN Switch */}
-          <div className="flex items-center mr-4">
-            <span className={`mr-2 text-sm ${isDocumentSearch ? "text-gray-500" : "text-blue-600"}`}>Database</span>
-            <Switch
-              checked={isDocumentSearch}
-              onCheckedChange={(checked) => setIsDocumentSearch(checked)}
-              disabled
-              className="bg-gray-300 border-2 border-gray-200 rounded-full"
-            />
-            <span className={`ml-2 text-sm ${isDocumentSearch ? "text-blue-600" : "text-gray-500"}`}>Document</span>
-          </div>
-
-          {/* Input and Send Button */}
-          <div className="flex-1 flex space-x-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={`Search in ${isDocumentSearch ? "Document" : "Database"}...`}
-              className="flex-1 bg-white text-gray-800 p-2 rounded border border-gray-300"
-            />
-            <button onClick={sendMessage} className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded">
-              Send
-            </button>
-          </div>
+        {/* Input and Send Button */}
+        <div className="flex-1 flex space-x-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={`Search in ${isDocumentSearch ? "Document" : "Database"}...`}
+            className="flex-1 bg-white text-gray-800 p-2 rounded border border-gray-300"
+          />
+          <button
+            onClick={sendMessage}
+            className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-800 hover:bg-gradient-to-br text-white p-2 rounded w-20"
+          >
+            Send
+          </button>
         </div>
       </div>
     </div>

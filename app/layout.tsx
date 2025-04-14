@@ -7,10 +7,6 @@ export const metadata: Metadata = {
   description: "CVM Wolfie",
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout() {
   return <ClientLayout></ClientLayout>
 }
