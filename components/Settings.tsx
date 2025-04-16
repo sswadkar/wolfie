@@ -48,7 +48,7 @@ const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Connection String</label>
                   <input
                     type="text"
-                    placeholder="e.g. postgresql://user:password@localhost:5432/db"
+                    placeholder="admin/secret123@dbhost.example.com:1521/orclpdb1"
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>

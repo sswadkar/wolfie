@@ -11,12 +11,12 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
   // const [activeSection, setActiveSection] = useState<string>("submissions")
-  const [showDocumentOptions, setShowDocumentOptions] = useState<boolean>(true)
-  const [selectedLabels, setSelectedLabels] = useState<string[]>([])
+  const [showSecureDocumentOptions, setShowSecureDocumentOptions] = useState<boolean>(true)
+  const [selectedSecureDocs, setSelectedSecureDocs] = useState<string[]>([])
+  const [showPublicDocumentOptions, setShowPublicDocumentOptions] = useState<boolean>(false)
+  const [selectedPublicDocs, setSelectedPublicDocs] = useState<string[]>([])
 
-  const labels = [
-    "Secure Documents",
-    "Public Documents",
+  const secureDocumentLabels = [
     "Effectiveness",
     "Human Food Safety",
     "Chemistry and Manufacturing Controls",
@@ -46,9 +46,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
     "Antimicrobial Report",
     "CAREs Act"
   ]
+
+  const publicDocumentLabels: string[] = []
   
-  const toggleLabel = (label: string) => {
-    setSelectedLabels(prev =>
+  const toggleSecureLabel = (label: string) => {
+    setSelectedSecureDocs(prev =>
+      prev.includes(label)
+        ? prev.filter(l => l !== label) // remove if already selected
+        : [...prev, label]              // add if not selected
+    )
+  }
+
+  const togglePublicLabel = (label: string) => {
+    setSelectedPublicDocs(prev =>
       prev.includes(label)
         ? prev.filter(l => l !== label) // remove if already selected
         : [...prev, label]              // add if not selected
@@ -96,27 +106,64 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
             </div>
           </div> */}
 
-          {/* Documents Section */}
+          {/* Secure Documents Section */}
           <div className= "border-t border-gray-200 pt-4 w-full">
             <button
               className="flex items-center justify-between overflow-y-auto w-full text-sm font-medium text-gray-700 mb-1 mr-2"
-              onClick={() => setShowDocumentOptions(!showDocumentOptions)}
+              onClick={() => setShowSecureDocumentOptions(!showSecureDocumentOptions)}
             >
               <span className="flex items-center h">
-                <FaTag className="mr-2" /> Documents
+                <FaTag className="mr-2" /> Secure Documents
               </span>
-              {showDocumentOptions ? <FaChevronUp /> : <FaChevronDown />}
+              {showSecureDocumentOptions ? <FaChevronUp /> : <FaChevronDown />}
             </button>
 
-            {showDocumentOptions && (
+            {showSecureDocumentOptions && (
               <div className="max-h-96 overflow-y-auto pr-1">
                 <div className="flex flex-wrap gap-2 mt-2">
-                {labels.map((label, index) => {
-                  const isSelected = selectedLabels.includes(label)
+                {secureDocumentLabels.map((label, index) => {
+                  const isSelected = selectedSecureDocs.includes(label)
                   return (
                     <button
                       key={index}
-                      onClick={() => toggleLabel(label)}
+                      onClick={() => toggleSecureLabel(label)}
+                      className={`px-2 py-1 text-xs rounded-full border ${
+                        isSelected
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-700"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
+                </div>
+              </div>
+            )}
+          </div>
+          <div className= "border-t border-gray-200 mt-4 w-full"></div>
+
+          {/* Public Documents Section */}
+          <div className= "border-t border-gray-200 pt-4 w-full">
+            <button
+              className="flex items-center justify-between overflow-y-auto w-full text-sm font-medium text-gray-700 mb-1 mr-2"
+              onClick={() => setShowPublicDocumentOptions(!showPublicDocumentOptions)}
+            >
+              <span className="flex items-center h">
+                <FaTag className="mr-2" /> Public Documents
+              </span>
+              {showPublicDocumentOptions ? <FaChevronUp /> : <FaChevronDown />}
+            </button>
+
+            {showPublicDocumentOptions && (
+              <div className="max-h-96 overflow-y-auto pr-1">
+                <div className="flex flex-wrap gap-2 mt-2">
+                {publicDocumentLabels.map((label, index) => {
+                  const isSelected = selectedPublicDocs.includes(label)
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => togglePublicLabel(label)}
                       className={`px-2 py-1 text-xs rounded-full border ${
                         isSelected
                           ? "bg-blue-600 text-white border-blue-600"
