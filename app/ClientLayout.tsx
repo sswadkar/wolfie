@@ -14,6 +14,7 @@ interface Source {
   indicator: string
   source_url: string
   page_content: string
+  page_number: number
 }
 
 export default function ClientLayout() {

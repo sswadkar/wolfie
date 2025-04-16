@@ -12,6 +12,7 @@ interface SettingsProps {
 
 const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
   const [activeModal, setActiveModal] = useState<string | null>(null)
+  const [source, setSource] = useState("Amazon S3")
 
   const closeModal = () => {
     setActiveModal(null)
@@ -36,6 +37,7 @@ const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Database Type</label>
                   <select className="w-full p-2 border border-gray-300 rounded-md">
+                    <option>Oracle</option>
                     <option>PostgreSQL</option>
                     <option>MySQL</option>
                     <option>MongoDB</option>
@@ -85,7 +87,12 @@ const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Document Source</label>
-                  <select className="w-full p-2 border border-gray-300 rounded-md">
+                  <select
+                    value={source}
+                    onChange={(e) => setSource(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    <option>Amazon S3</option>
                     <option>SharePoint</option>
                     <option>Google Drive</option>
                     <option>OneDrive</option>
@@ -93,6 +100,44 @@ const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
                     <option>Local Network</option>
                   </select>
                 </div>
+
+                {source === "Amazon S3" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Access Key</label>
+                      <input
+                        type="text"
+                        placeholder="AKIAIOSFODNN7EXAMPLE"
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Secret Key</label>
+                      <input
+                        type="password"
+                        placeholder="***************"
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Bucket Name</label>
+                      <input
+                        type="text"
+                        placeholder="my-s3-bucket"
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Region</label>
+                      <input
+                        type="text"
+                        placeholder="us-east-1"
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Connection URL</label>
                   <input
@@ -101,6 +146,8 @@ const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>
+
+                {source !== "Amazon S3" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Authentication</label>
                   <select className="w-full p-2 border border-gray-300 rounded-md">
@@ -109,6 +156,8 @@ const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
                     <option>Username/Password</option>
                   </select>
                 </div>
+                )}
+
                 <div className="flex justify-end space-x-2 mt-6">
                   <button
                     onClick={closeModal}

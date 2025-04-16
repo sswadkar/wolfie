@@ -10,11 +10,13 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
-  const [activeSection, setActiveSection] = useState<string>("submissions")
-  const [showLabels, setShowLabels] = useState<boolean>(false)
+  // const [activeSection, setActiveSection] = useState<string>("submissions")
+  const [showDocumentOptions, setShowDocumentOptions] = useState<boolean>(true)
   const [selectedLabels, setSelectedLabels] = useState<string[]>([])
 
   const labels = [
+    "Secure Documents",
+    "Public Documents",
     "Effectiveness",
     "Human Food Safety",
     "Chemistry and Manufacturing Controls",
@@ -56,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`bg-white border-l border-gray-200 overflow-y-auto h-full flex flex-col transition-all duration-300 ease-in-out shadow-md ${figtree.className} ${
+      className={`relative top-0 left-0 h-full bg-white border-r border-gray-200 z-50 transition-all duration-300 ease-in-out ${figtree.className} ${
         isVisible ? "w-80" : "w-0 overflow-hidden"
       }`}
     >
@@ -69,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
           </div>
 
           {/* Document Toggle Checkboxes */}
-          <div className="border-t border-gray-200 pt-4 w-full mb-4">
+          {/* <div className="border-t border-gray-200 pt-4 w-full mb-4">
             <h3 className="text-sm font-semibold text-gray-700 mb-2">Document Sections</h3>
             <div className="flex flex-col gap-2">
               <label className="inline-flex items-center">
@@ -92,21 +94,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
                 <span className="ml-2 text-sm text-gray-700">Guidance & Regulation Documents</span>
               </label>
             </div>
-          </div>
+          </div> */}
 
-          {/* Labels Section */}
+          {/* Documents Section */}
           <div className= "border-t border-gray-200 pt-4 w-full">
             <button
               className="flex items-center justify-between overflow-y-auto w-full text-sm font-medium text-gray-700 mb-1 mr-2"
-              onClick={() => setShowLabels(!showLabels)}
+              onClick={() => setShowDocumentOptions(!showDocumentOptions)}
             >
               <span className="flex items-center h">
-                <FaTag className="mr-2" /> Labels
+                <FaTag className="mr-2" /> Documents
               </span>
-              {showLabels ? <FaChevronUp /> : <FaChevronDown />}
+              {showDocumentOptions ? <FaChevronUp /> : <FaChevronDown />}
             </button>
 
-            {showLabels && (
+            {showDocumentOptions && (
               <div className="max-h-96 overflow-y-auto pr-1">
                 <div className="flex flex-wrap gap-2 mt-2">
                 {labels.map((label, index) => {

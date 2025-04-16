@@ -8,6 +8,7 @@ interface Source {
   indicator: string
   source_url: string
   page_content: string
+  page_number: number
 }
 
 interface TraceLogProps {
@@ -95,6 +96,9 @@ const TraceLog: React.FC<TraceLogProps> = ({
               <p className="text-sm mb-2">{sources[currentIndex].source_url}</p>
               <p className="text-md mt-4 font-semibold mb-1">Page Content</p>
               <p className="text-sm mt-4 whitespace-pre-wrap">{sources[currentIndex].page_content}</p>
+              <p className="text-md text-gray-800 mt-4">
+                <span className="font-semibold text-md text-gray-800">From Page: </span> {sources[currentIndex].page_number}
+              </p>
             </div>
           ) : (
             <p className="text-gray-500 text-sm text-center">No sources available.</p>

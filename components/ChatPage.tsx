@@ -20,6 +20,7 @@ interface Source {
   indicator: string
   source_url: string
   page_content: string
+  page_number: number
 }
 
 function insertSourceLinks(text: string, sources: { [key: string]: { [sub_key: string]: number } }[], offset: number) {
@@ -236,11 +237,12 @@ const ChatPage: React.FC<ChatPageProps> = ({
         console.log("KB Query")
 
         const formattedSources = sources.map(
-          (source: { question: string; source_url: string; page_content: string }, index: number) => ({
+          (source: { question: string; source_url: string; page_content: string, metadata?: { [key: string]: number }; }, index: number) => ({
             question: userMessage.text || "No question available",
             indicator: (sourcesData.length + index + 1).toString(), // Continue numbering
             source_url: source.source_url || "No source URL",
             page_content: source.page_content || "No content available",
+            page_number: source.metadata?.["x-amz-bedrock-kb-document-page-number"] || "N/A",
           }),
         )
         const offset = sourcesData.length
