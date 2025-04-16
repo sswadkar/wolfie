@@ -227,7 +227,7 @@ const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
   return (
     <>
       <div
-        className={`relative top-0 right-0 h-full bg-white border-l border-gray-200 z-50 transition-all duration-300 ease-in-out ${
+        className={`relative top-0 right-0 h-full bg-white border-l border-gray-200 transition-all duration-300 ease-in-out ${
           isVisible ? "w-80" : "w-0 overflow-hidden"
         } ${figtree.className}`}
       >

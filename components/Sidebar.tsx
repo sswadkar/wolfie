@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`relative top-0 left-0 h-full bg-white border-r border-gray-200 z-50 transition-all duration-300 ease-in-out ${figtree.className} ${
+      className={`relative top-0 left-0 h-full bg-white border-r border-gray-200 transition-all duration-300 ease-in-out ${figtree.className} ${
         isVisible ? "w-80" : "w-0 overflow-hidden"
       }`}
     >
