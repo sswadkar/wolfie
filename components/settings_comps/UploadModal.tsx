@@ -41,7 +41,9 @@ export default function UploadModal({ closeModal }: UploadModalProps) {
       const data = await res.json();
       const status = data.status;
 
-      if (status === "SUCCEEDED") {
+      console.log(status)
+
+      if (status === "COMPLETE") {
         setStatus("done");
         return;
       } else if (status === "FAILED") {
@@ -72,7 +74,8 @@ export default function UploadModal({ closeModal }: UploadModalProps) {
       const result = await res.json();
       if (!res.ok) throw new Error(result.error);
 
-      const ingestionJobId = result.job?.ingestionJobId;
+      const ingestionJobId = result.ingestionJob?.ingestionJobId;
+      console.log(ingestionJobId)
       if (ingestionJobId) {
         await pollIngestion(ingestionJobId);
       }
