@@ -5,6 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { FiX, FiPlus, FiDatabase, FiFolder, FiUpload } from "react-icons/fi"
 import { figtree } from "@/lib/fonts"
+import UploadModal from "./settings_comps/UploadModal"
 
 interface SettingsProps {
   isVisible: boolean
@@ -174,51 +175,7 @@ const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
           </div>
         )
       case "upload":
-        return (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-gray-800">Upload Document</h3>
-                <button
-                  onClick={closeModal}
-                  className="p-1 text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-100"
-                >
-                  <FiX size={20} />
-                </button>
-              </div>
-              <div className="space-y-4">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
-                  <p className="mt-1 text-sm text-gray-600">
-                    Drag and drop files here, or{" "}
-                    <span className="text-blue-600 hover:text-blue-500 cursor-pointer">browse</span>
-                  </p>
-                  <p className="mt-1 text-xs text-gray-500">Supports PDF, DOCX, TXT, CSV, XLS, XLSX (max 50MB)</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Document Category</label>
-                  <select className="w-full p-2 border border-gray-300 rounded-md">
-                    <option>Submission Documents</option>
-                    <option>Guidance & Regulations</option>
-                    <option>Reference Materials</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div className="flex justify-end space-x-2 mt-6">
-                  <button
-                    onClick={closeModal}
-                    className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700">
-                    Upload
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
+        return <UploadModal closeModal={closeModal} />;
       default:
         return null
     }
