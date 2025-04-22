@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
     for (const file of files) {
       const buffer = await file.arrayBuffer();
-      const s3Key = `${PREFIX}${uuidv4()}-${file.name}`;
+      const s3Key = `${PREFIX}${file.name}`;
 
       const uploadCommand = new PutObjectCommand({
         Bucket: BUCKET_NAME,

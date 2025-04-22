@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { FiUpload, FiX, FiCheckCircle } from "react-icons/fi";
 
 interface UploadModalProps {
@@ -12,6 +13,8 @@ export default function UploadModal({ closeModal }: UploadModalProps) {
   const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState<"idle" | "uploading" | "ingesting" | "done">("idle");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -94,8 +97,16 @@ export default function UploadModal({ closeModal }: UploadModalProps) {
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-gray-800">Upload Document</h3>
           <button
-            onClick={closeModal}
+            onClick={() => {
+              console.log(status)
+              if (status === "done") {
+                console.log("refreshing")
+                router.refresh(); // triggers a hard page refresh without full reload
+              }
+              closeModal()
+            }}
             className="p-1 text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-100"
+            disabled={uploading}
           >
             <FiX size={20} />
           </button>
@@ -136,7 +147,7 @@ export default function UploadModal({ closeModal }: UploadModalProps) {
                 onChange={handleFileChange}
               />
               <p className="mt-1 text-xs text-gray-500">
-                Supports PDF, DOCX, TXT, CSV, XLS, XLSX (max 50MB)
+                Supports PDF (max 50MB)
               </p>
             </div>
           )}
@@ -157,13 +168,6 @@ export default function UploadModal({ closeModal }: UploadModalProps) {
 
           {/* Actions */}
           <div className="flex justify-end space-x-2 mt-6">
-            <button
-              onClick={closeModal}
-              className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
-              disabled={uploading}
-            >
-              Close
-            </button>
             <button
               onClick={handleUpload}
               disabled={uploading || !selectedFiles.length || status !== "idle"}

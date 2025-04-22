@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { FaChevronDown, FaChevronUp, FaTag } from "react-icons/fa"
+import { useEffect, useState } from "react"
+import { FaChevronDown, FaChevronUp, FaTag, FaTrash, FaSync } from "react-icons/fa"
 import type React from "react"
 import { figtree } from "@/lib/fonts"
 
@@ -9,12 +9,18 @@ interface SidebarProps {
   isVisible: boolean
 }
 
+interface PublicDoc {
+  key: string;
+  size: number;
+  lastModified: string;
+}
+
 const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
   // const [activeSection, setActiveSection] = useState<string>("submissions")
   const [showSecureDocumentOptions, setShowSecureDocumentOptions] = useState<boolean>(true)
   const [selectedSecureDocs, setSelectedSecureDocs] = useState<string[]>([])
   const [showPublicDocumentOptions, setShowPublicDocumentOptions] = useState<boolean>(false)
-  const [selectedPublicDocs, setSelectedPublicDocs] = useState<string[]>([])
+  const [publicDocs, setPublicDocs] = useState<PublicDoc[]>([]);
 
   const secureDocumentLabels = [
     "Effectiveness",
@@ -47,8 +53,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
     "CAREs Act"
   ]
 
-  const publicDocumentLabels: string[] = []
-  
   const toggleSecureLabel = (label: string) => {
     setSelectedSecureDocs(prev =>
       prev.includes(label)
@@ -57,13 +61,39 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
     )
   }
 
-  const togglePublicLabel = (label: string) => {
-    setSelectedPublicDocs(prev =>
-      prev.includes(label)
-        ? prev.filter(l => l !== label) // remove if already selected
-        : [...prev, label]              // add if not selected
-    )
-  }
+  const handleDelete = async (key: string) => {
+    const confirm = window.confirm(`Are you sure you want to delete "${key.replace("uploaded/", "")}"?`);
+    if (!confirm) return;
+  
+    const res = await fetch(`/api/public-docs?key=${encodeURIComponent(key)}`, {
+      method: "DELETE",
+    });
+  
+    if (res.ok) {
+      setPublicDocs((prev) => prev.filter((doc) => doc.key !== key));
+      alert("Document deleted.");
+    } else {
+      alert("Failed to delete document.");
+    }
+  };
+  
+  const handleResyncAll = async () => {
+    const res = await fetch("/api/resync", {
+      method: "POST",
+    });
+  
+    if (res.ok) {
+      alert("Resync started for all public documents.");
+    } else {
+      alert("Failed to start resync.");
+    }
+  };
+
+  useEffect(() => {
+    fetch("/api/public-docs")
+      .then((res) => res.json())
+      .then((data) => setPublicDocs(data.files || []));
+  }, []);
   
 
   return (
@@ -154,29 +184,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
               </span>
               {showPublicDocumentOptions ? <FaChevronUp /> : <FaChevronDown />}
             </button>
-
-            {showPublicDocumentOptions && (
-              <div className="max-h-96 overflow-y-auto pr-1">
-                <div className="flex flex-wrap gap-2 mt-2">
-                {publicDocumentLabels.map((label, index) => {
-                  const isSelected = selectedPublicDocs.includes(label)
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => togglePublicLabel(label)}
-                      className={`px-2 py-1 text-xs rounded-full border ${
-                        isSelected
-                          ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-700"
-                      }`}
-                    >
-                      {label}
+            {showPublicDocumentOptions && 
+            <div>
+            <div className="flex justify-center mb-2">
+              <button
+                className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                onClick={handleResyncAll}
+              >
+                <FaSync size={14} /> Resync All
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 mt-2 text-sm text-gray-800">
+              {publicDocs.length === 0 && <p className="text-gray-500 text-sm italic">No public documents found.</p>}
+              {publicDocs.map((doc, index) => (
+                <div key={index} className="flex items-center justify-between border px-3 py-1 rounded-md bg-gray-50">
+                  <span className="truncate max-w-[70%]">{doc.key.replace("uploaded/", "")}</span>
+                  <div className="flex items-center gap-2">
+                    <button className="text-red-600 hover:text-red-800" onClick={() => handleDelete(doc.key)}>
+                      <FaTrash size={14} />
                     </button>
-                  )
-                })}
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
+            </div>
+            }
           </div>
           <div className= "border-t border-gray-200 mt-4 w-full"></div>
         </div>
