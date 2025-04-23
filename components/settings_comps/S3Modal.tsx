@@ -46,7 +46,7 @@ export default function S3Modal({ closeModal }: S3ModalProps) {
 
       // Optionally refresh the page or data
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       console.error("Connect failed:", err);
       setStatus("error");
       setMessage("Connection error.");

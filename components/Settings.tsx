@@ -14,7 +14,6 @@ interface SettingsProps {
 
 const Settings: React.FC<SettingsProps> = ({ isVisible }) => {
   const [activeModal, setActiveModal] = useState<string | null>(null)
-  const [source, setSource] = useState("Amazon S3")
 
   const closeModal = () => {
     setActiveModal(null)

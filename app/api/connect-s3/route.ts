@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 // Helper to convert stream to buffer
 async function streamToBuffer(stream: Readable): Promise<Buffer> {
-  const chunks: any[] = [];
+  const chunks = [];
   for await (const chunk of stream) chunks.push(chunk);
   return Buffer.concat(chunks);
 }
@@ -66,7 +66,6 @@ export async function POST(req: Request) {
         message?: string;
         ingestionJob?: { ingestionJobId?: string };
         uploadedFiles?: string[];
-        error?: any;
       };
 
     if (!uploadRes.ok) {
@@ -78,8 +77,8 @@ export async function POST(req: Request) {
       ingestionJob: result.ingestionJob,
       uploadedFiles: result.uploadedFiles,
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error("S3 Connect Error:", err);
-    return NextResponse.json({ message: err.message || "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ message: err || "Internal Server Error" }, { status: 500 });
   }
 }
